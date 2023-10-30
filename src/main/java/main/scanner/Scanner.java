@@ -78,6 +78,14 @@ public class Scanner {
                 line++;
                 break;
             default:
+                if (Character.isDigit(c)) {
+                    number();
+                    break;
+                }
+                if (c == '_' || Character.isAlphabetic(c)) {
+                    identifier();
+                    break;
+                }
                 JLox.error(line, "Unexpected symbol: " + c);
                 break;
         }
@@ -98,6 +106,27 @@ public class Scanner {
 
         String literal = source.substring(start + 1, current - 1);
         addToken(TokenType.STRING, literal);
+    }
+
+    private void number() {
+        while (!isAtEnd() && Character.isDigit(peek())) {
+            advance();
+        }
+
+        if (!isAtEnd() && peek() == '.' && Character.isDigit(peekNext())) {
+            advance();
+            while (!isAtEnd() && Character.isDigit(peek())) advance();
+        }
+
+        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
+    }
+
+    private void identifier() {
+        while (!isAtEnd() && (peek() == '_' || Character.isAlphabetic(peek()) || Character.isDigit(peek()))) {
+            advance();
+        }
+
+        addToken(TokenType.IDENTIFIER);
     }
 
     // Returns the char we are examining now and advances the 'current' cursor to the next character.
@@ -123,5 +152,10 @@ public class Scanner {
 
     private char peek() {
         return source.charAt(current);
+    }
+
+    private char peekNext() {
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
     }
 }

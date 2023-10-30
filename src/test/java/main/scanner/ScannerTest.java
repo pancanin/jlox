@@ -66,4 +66,54 @@ class ScannerTest {
         assertEquals(1, tokens.size());
         assertEquals(TokenType.EOF, tokens.get(0).type);
     }
+
+    @Test
+    public void shouldConsumeIntLiteral() {
+        String code = "1234";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(2, tokens.size());
+        assertEquals(TokenType.NUMBER, tokens.get(0).type);
+        assertEquals(1234.0, tokens.get(0).literal);
+        assertEquals("1234", tokens.get(0).lexeme);
+    }
+
+    @Test
+    public void shouldConsumeDoubleLiteral() {
+        String code = "1234.56";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(2, tokens.size());
+        assertEquals(TokenType.NUMBER, tokens.get(0).type);
+        assertEquals(1234.56, tokens.get(0).literal);
+        assertEquals("1234.56", tokens.get(0).lexeme);
+    }
+
+    @Test
+    public void shouldNotConsumeTrailingDecimalPointNumber() {
+        String code = "1234.";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(3, tokens.size());
+        assertEquals(TokenType.NUMBER, tokens.get(0).type);
+        assertEquals(1234.0, tokens.get(0).literal);
+        assertEquals("1234", tokens.get(0).lexeme);
+        assertEquals(TokenType.DOT, tokens.get(1).type);
+    }
+
+    @Test
+    public void shouldConsumeIdentifiers() {
+        String code = "_hello2 radius 00abc";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(5, tokens.size());
+        assertEquals(TokenType.IDENTIFIER, tokens.get(0).type);
+        assertEquals("_hello2", tokens.get(0).lexeme);
+        assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
+        assertEquals("radius", tokens.get(1).lexeme);
+        assertEquals(TokenType.NUMBER, tokens.get(2).type);
+        assertEquals("00", tokens.get(2).lexeme);
+        assertEquals(TokenType.IDENTIFIER, tokens.get(3).type);
+        assertEquals("abc", tokens.get(3).lexeme);
+    }
 }
