@@ -36,6 +36,43 @@ class ScannerTest {
     }
 
     @Test
+    public void shouldConsumeGreedily() {
+        String code = "=========";
+        Scanner scanner = new Scanner(code);
+        List<Token> tokens = scanner.scanTokens();
+        Assertions.assertEquals(6, tokens.size());
+        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(0).type);
+        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(1).type);
+        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(2).type);
+        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
+        Assertions.assertEquals(TokenType.EQUAL, tokens.get(4).type);
+    }
+
+    @Test
+    public void shouldConsumeSimpleIfStatement() {
+        String code = "if (12.23 == 12) { print(\"hi\"); }";
+        Scanner scanner = new Scanner(code);
+        List<Token> tokens = scanner.scanTokens();
+
+        Assertions.assertEquals(TokenType.IF, tokens.get(0).type);
+        Assertions.assertEquals(TokenType.LEFT_PAREN, tokens.get(1).type);
+        Assertions.assertEquals(TokenType.NUMBER, tokens.get(2).type);
+        Assertions.assertEquals(12.23, tokens.get(2).literal);
+        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
+        Assertions.assertEquals(TokenType.NUMBER, tokens.get(4).type);
+        Assertions.assertEquals(12.0, tokens.get(4).literal);
+        Assertions.assertEquals(TokenType.RIGHT_PAREN, tokens.get(5).type);
+        Assertions.assertEquals(TokenType.LEFT_BRACE, tokens.get(6).type);
+        Assertions.assertEquals(TokenType.PRINT, tokens.get(7).type);
+        Assertions.assertEquals(TokenType.LEFT_PAREN, tokens.get(8).type);
+        Assertions.assertEquals(TokenType.STRING, tokens.get(9).type);
+        Assertions.assertEquals("hi", tokens.get(9).literal);
+        Assertions.assertEquals(TokenType.RIGHT_PAREN, tokens.get(10).type);
+        Assertions.assertEquals(TokenType.SEMICOLON, tokens.get(11).type);
+        Assertions.assertEquals(TokenType.RIGHT_BRACE, tokens.get(12).type);
+    }
+
+    @Test
     public void shouldParseStringLiterals() {
         String code = "\"Hello this is a string literal\"";
         Scanner sc = new Scanner(code);
@@ -115,5 +152,37 @@ class ScannerTest {
         assertEquals("00", tokens.get(2).lexeme);
         assertEquals(TokenType.IDENTIFIER, tokens.get(3).type);
         assertEquals("abc", tokens.get(3).lexeme);
+    }
+
+    @Test
+    public void shouldConsumeKeywords() {
+        String code = "var radius = abc;";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(6, tokens.size());
+        assertEquals(TokenType.VAR, tokens.get(0).type);
+        assertEquals("var", tokens.get(0).lexeme);
+        assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
+        assertEquals("radius", tokens.get(1).lexeme);
+        assertEquals(TokenType.EQUAL, tokens.get(2).type);
+        assertEquals(TokenType.IDENTIFIER, tokens.get(3).type);
+        assertEquals("abc", tokens.get(3).lexeme);
+        assertEquals(TokenType.SEMICOLON, tokens.get(4).type);
+    }
+
+    @Test
+    public void shouldIgnoreBlockComments() {
+        String code = "var\n" +
+                "/*\n" +
+                "* This is a block comment\n" +
+                "/* This is a nested /* This is hella nested code */ block comment */\n" +
+                "*/\n" +
+                        "a";
+        Scanner sc = new Scanner(code);
+        List<Token> tokens = sc.scanTokens();
+        assertEquals(3, tokens.size());
+        assertEquals(TokenType.VAR, tokens.get(0).type);
+        assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
+        assertEquals(sc.getCurrentLine(), 6);
     }
 }
