@@ -1,15 +1,15 @@
 package main.scanner;
 
 import main.JLox;
+import main.errors.ErrorReporter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Scanner {
     private final String source;
     private final List<Token> tokens;
+
+    private final ErrorReporter errorReporter;
 
     private int start = 0; // indicates the start of a lexeme
     private int current = 0; // Where we are in the source code
@@ -37,14 +37,14 @@ public class Scanner {
         keywords.put("while",  TokenType.WHILE);
     }
 
-    public Scanner(String source) {
+    public Scanner(String source, ErrorReporter errorReporter) {
         this.source = source;
         this.tokens = new ArrayList<>();
+        this.errorReporter = errorReporter;
     }
 
-    List<Token> scanTokens() {
+    public List<Token> scanTokens() {
         while (!isAtEnd()) {
-            // We are at the beginning of the next lexeme.
             start = current;
             scanToken();
         }
@@ -119,7 +119,7 @@ public class Scanner {
                     identifier();
                     break;
                 }
-                JLox.error(line, "Unexpected symbol: " + c);
+                errorReporter.report(line, c + "", String.format("Unexpected symbol '%c'", c));
                 break;
         }
     }
@@ -131,7 +131,7 @@ public class Scanner {
         }
 
         if (isAtEnd()) {
-            JLox.error(line, "Unterminated string");
+            errorReporter.report(line, "", "Unterminated string");
             return;
         }
 

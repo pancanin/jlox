@@ -1,15 +1,30 @@
 package main;
 
+import main.errors.ErrorReporter;
+import main.parser.AstPrinter;
+import main.parser.Expr;
+import main.parser.ParseError;
+import main.parser.Parser;
+import main.scanner.Scanner;
+import main.scanner.Token;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class JLox {
 
     private static boolean hadError;
+
+    private static ErrorReporter errorReporter;
+
+    static {
+        errorReporter = new ErrorReporter(System.out::println);
+    }
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -45,21 +60,18 @@ public class JLox {
     }
 
     private static void run(String source) {
-//        Scanner scanner = new Scanner(source);
-//        List<Token> tokens = scanner.scanTokens();
-//
-//        // For now, just print the tokens.
-//        for (Token token : tokens) {
-//            System.out.println(token);
-//        }
-    }
+        Scanner scanner = new Scanner(source, errorReporter);
+        List<Token> tokens = scanner.scanTokens();
+        Parser p = new Parser(tokens);
+        Expr expr = p.parse();
 
-    public static void error(int line, String message) {
-        report(line, "", message);
-    }
+        if (p.hasError()) {
+            ParseError err = p.getError();
+            errorReporter.report(err.getToken().line, err.getToken().lexeme, err.getMsg());
+            hadError = true;
+            return;
+        }
 
-    private static void report(int line, String where, String message) {
-        System.err.println("[line " + line + "] Error" + where + ": " + message);
-        hadError = true;
+        System.out.println(new AstPrinter().print(expr));
     }
 }

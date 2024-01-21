@@ -1,9 +1,7 @@
 package main.parser;
 import main.scanner.Token;
 
-import java.util.List;
-
-abstract class Expr {
+public abstract class Expr {
 
   abstract <R> R accept(Visitor<R> visitor);
 interface Visitor<R> {

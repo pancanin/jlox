@@ -2,7 +2,7 @@ package main.parser;
 
 public class AstPrinter implements Expr.Visitor<String> {
 
-    String print(Expr expr) {
+    public String print(Expr expr) {
         return expr.accept(this);
     }
 
@@ -31,8 +31,7 @@ public class AstPrinter implements Expr.Visitor<String> {
         strBuilder.append("(").append(name);
 
         for (Expr e : exprs) {
-            strBuilder.append(' ');
-            strBuilder.append(e.accept(this));
+            strBuilder.append(' ').append(e.accept(this));;
         }
         strBuilder.append(')');
 

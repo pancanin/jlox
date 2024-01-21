@@ -1,5 +1,6 @@
 package main.scanner;
 
+import main.errors.ErrorReporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,13 +9,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScannerTest {
+
+    static ErrorReporter errorReporter;
+
+    static {
+        errorReporter = new ErrorReporter(System.out::println);
+    }
+
     @Test
     public void shouldParseSimpleTokensIgnoresComments() {
         String code = "// this is a comment\n" +
                 "(( )){} // grouping stuff\n" +
                 "!*+-/=<> <= == // operators";
 
-        Scanner scanner = new Scanner(code);
+        Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
 
         Assertions.assertEquals(tokens.get(0).type, TokenType.LEFT_PAREN);
@@ -38,7 +46,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeGreedily() {
         String code = "=========";
-        Scanner scanner = new Scanner(code);
+        Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
         Assertions.assertEquals(6, tokens.size());
         Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(0).type);
@@ -51,7 +59,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeSimpleIfStatement() {
         String code = "if (12.23 == 12) { print(\"hi\"); }";
-        Scanner scanner = new Scanner(code);
+        Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
 
         Assertions.assertEquals(TokenType.IF, tokens.get(0).type);
@@ -75,7 +83,7 @@ class ScannerTest {
     @Test
     public void shouldParseStringLiterals() {
         String code = "\"Hello this is a string literal\"";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
 
         Assertions.assertEquals(TokenType.STRING, tokens.get(0).type);
@@ -87,7 +95,7 @@ class ScannerTest {
     public void shouldParseMultilineStringLiterals() {
         String code = "\"Hello this is a string\n" +
                 " literal\"";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
 
         Assertions.assertEquals(TokenType.STRING, tokens.get(0).type);
@@ -98,7 +106,7 @@ class ScannerTest {
     @Test
     public void shouldNotConsumeUnterminatedStrings() {
         String code = "\"Hello this is a string";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(1, tokens.size());
         assertEquals(TokenType.EOF, tokens.get(0).type);
@@ -107,7 +115,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeIntLiteral() {
         String code = "1234";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(2, tokens.size());
         assertEquals(TokenType.NUMBER, tokens.get(0).type);
@@ -118,7 +126,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeDoubleLiteral() {
         String code = "1234.56";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(2, tokens.size());
         assertEquals(TokenType.NUMBER, tokens.get(0).type);
@@ -129,7 +137,7 @@ class ScannerTest {
     @Test
     public void shouldNotConsumeTrailingDecimalPointNumber() {
         String code = "1234.";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(3, tokens.size());
         assertEquals(TokenType.NUMBER, tokens.get(0).type);
@@ -141,7 +149,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeIdentifiers() {
         String code = "_hello2 radius 00abc";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(5, tokens.size());
         assertEquals(TokenType.IDENTIFIER, tokens.get(0).type);
@@ -157,7 +165,7 @@ class ScannerTest {
     @Test
     public void shouldConsumeKeywords() {
         String code = "var radius = abc;";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(6, tokens.size());
         assertEquals(TokenType.VAR, tokens.get(0).type);
@@ -178,7 +186,7 @@ class ScannerTest {
                 "/* This is a nested /* This is hella nested code */ block comment */\n" +
                 "*/\n" +
                         "a";
-        Scanner sc = new Scanner(code);
+        Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
         assertEquals(3, tokens.size());
         assertEquals(TokenType.VAR, tokens.get(0).type);
