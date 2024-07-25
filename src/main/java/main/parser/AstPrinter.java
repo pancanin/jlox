@@ -1,6 +1,6 @@
 package main.parser;
 
-public class AstPrinter implements Expr.Visitor<String> {
+public final class AstPrinter implements Expr.Visitor<String> {
 
     public String print(Expr expr) {
         return expr.accept(this);
@@ -28,7 +28,7 @@ public class AstPrinter implements Expr.Visitor<String> {
 
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append("(").append(name);
+        strBuilder.append('(').append(name);
 
         for (Expr e : exprs) {
             strBuilder.append(' ').append(e.accept(this));;

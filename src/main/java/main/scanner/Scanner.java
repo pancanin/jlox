@@ -1,9 +1,11 @@
 package main.scanner;
 
-import main.JLox;
-import main.errors.ErrorReporter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import main.errors.ErrorReporter;
 
 public class Scanner {
     private final String source;
