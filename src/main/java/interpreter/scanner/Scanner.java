@@ -7,16 +7,36 @@ import java.util.Map;
 
 import interpreter.errors.ErrorReporter;
 
+/**
+ * Turns source code into a list of tokens.
+ * @author Valeri Hristov (valericfbg@gmail.com)
+ */
 public class Scanner {
     private final String source;
     private final List<Token> tokens;
 
     private final ErrorReporter errorReporter;
 
-    private int start = 0; // indicates the start of a lexeme
-    private int current = 0; // Where we are in the source code
+    /**
+     * Used to keep track of the start of a lexeme and then using this index to extract the whole lexeme from the source code.
+     */
+    private int start = 0;
+
+    /**
+     * Used to keep track of where we are in the source code.
+     */
+    private int current = 0;
+
+    /**
+     * Used to keep track of which line we have reached in the source code.
+     * This applies to running a script file and is later used to report on which line an error happened.
+     */
     private int line = 1;
 
+    /**
+     * A map between text representation of a keyword, as it would appear in the code, and an enum type of the token.
+     * The token type is easier to work with later in the Parser and Interpreter.
+     */
     private static final Map<String, TokenType> keywords;
 
     static {
@@ -45,6 +65,10 @@ public class Scanner {
         this.errorReporter = errorReporter;
     }
 
+    /**
+     * Entrypoint of the Scanner class.
+     * @return A list of tokens, generated from the source code.
+     */
     public List<Token> scanTokens() {
         while (!isAtEnd()) {
             start = current;
@@ -59,10 +83,18 @@ public class Scanner {
         return line;
     }
 
+    /**
+     * Are we at the end of the source code, meaning that there are no more characters to consume.
+     * @return true if we are at the end of the source code.
+     */
     private boolean isAtEnd() {
         return current >= source.length();
     }
 
+    /**
+     * Looks at the current character and either consumes just it, if it's a single character token or consumes a sequence of characters in the case of
+     * strings, numbers, etc.
+     */
     private void scanToken() {
         char c = advance();
         switch (c) {
@@ -126,6 +158,9 @@ public class Scanner {
         }
     }
 
+    /**
+     * Comsumes a string, which is a character sequence between double quotes.
+     */
     private void string() {
         while (!isAtEnd() && peek() != '"') {
             if (peek() == '\n') line++;
@@ -143,9 +178,18 @@ public class Scanner {
         addToken(TokenType.STRING, literal);
     }
 
+    /**
+     * Consumes a number, either integer or floating point.
+     * The underlying storage type is Double.
+     */
     private void number() {
         while (!isAtEnd() && Character.isDigit(peek())) {
             advance();
+            if (!isAtEnd() && Character.isAlphabetic(peek())) {
+                errorReporter.report(line, "", "Unexpected alphabetic character in number literal: " + peek());
+                consumeUntilSpace();
+                return;
+            }
         }
 
         if (!isAtEnd() && peek() == '.' && Character.isDigit(peekNext())) {
@@ -156,6 +200,11 @@ public class Scanner {
         addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
     }
 
+    /**
+     * Consumes an identifier.
+     * Identifiers can start with an underscore, alphabetic or digit.
+     * TODO: Hmm, it is strange that they can start with a digit...check this.
+     */
     private void identifier() {
         while (!isAtEnd() && (peek() == '_' || Character.isAlphabetic(peek()) || Character.isDigit(peek()))) {
             advance();
@@ -165,11 +214,15 @@ public class Scanner {
         addToken(keywords.getOrDefault(lexeme, TokenType.IDENTIFIER));
     }
 
+    /**
+     * Moves beyond a block comment. Quoted example: "\* something *\". In effect, ignores block comments.
+     */
     private void consumeBlockComment() {
         while (!(peekNext() == '/' && peek() == '*')) {
             if (peekNext() == '*' && peek() == '/') {
                 advance();
                 advance();
+                // Consume nested block comments.
                 consumeBlockComment();
             } else {
                 if (isAtEnd()) break;
@@ -183,32 +236,66 @@ public class Scanner {
         }
     }
 
-    // Returns the char we are examining now and advances the 'current' cursor to the next character.
+    /**
+     * Gets the current character in the source code and advances to the next character.
+     * @return The char in the source code which is pointed by 'current' index.
+     */
     private char advance() {
         return source.charAt(current++);
     }
 
+    /**
+     * Adds a token without a literal value.
+     * @param type The token type.
+     */
     private void addToken(TokenType type) {
         addToken(type, null);
     }
 
+    /**
+     * Adds a token with a literal value. Extracts the string representation of the value from the source code.
+     * @param type The token type. Could be identifier, string, number, etc.
+     * @param literal The name of the identifier, for example or the value of the integer or string variable.
+     */
     private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
     }
 
+    /**
+     * Checks if the current character in the source code equals the argument.
+     * If it is not equal, or if we are at the end of the source code, then there is no match.
+     * If they are equal, advance the source code cursor.
+     * @param token The character that we search in the source code.
+     * @return true if the argument matches the current character in the source code.
+     */
     private boolean match(char token) {
-        if (isAtEnd() || source.charAt(current) != token) return false;
+        if (isAtEnd() || peek() != token) return false;
         current++;
         return true;
     }
 
+    /**
+     * Just reads the current character in the source code.
+     * @return The current character in the source code.
+     */
     private char peek() {
         return source.charAt(current);
     }
 
+    /**
+     * Reads the character after the current one in the source code. Used for look-aheads.
+     * If we are at the last character now, then it returns a null-terminated char.
+     * @return The next character in the source code.
+     */
     private char peekNext() {
         if (current + 1 >= source.length()) return '\0';
         return source.charAt(current + 1);
+    }
+
+    private void consumeUntilSpace() {
+        while (!isAtEnd() && peek() != ' ') {
+            advance();
+        }
     }
 }

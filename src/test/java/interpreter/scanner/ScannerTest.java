@@ -2,6 +2,7 @@ package interpreter.scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -148,18 +149,15 @@ class ScannerTest {
 
     @Test
     public void shouldConsumeIdentifiers() {
+        // 00abc is ignored as an identifier as they cannot start with a number.
         String code = "_hello2 radius 00abc";
         Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
-        assertEquals(5, tokens.size());
+        assertEquals(3, tokens.size());
         assertEquals(TokenType.IDENTIFIER, tokens.get(0).type);
         assertEquals("_hello2", tokens.get(0).lexeme);
         assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
         assertEquals("radius", tokens.get(1).lexeme);
-        assertEquals(TokenType.NUMBER, tokens.get(2).type);
-        assertEquals("00", tokens.get(2).lexeme);
-        assertEquals(TokenType.IDENTIFIER, tokens.get(3).type);
-        assertEquals("abc", tokens.get(3).lexeme);
     }
 
     @Test
@@ -179,15 +177,81 @@ class ScannerTest {
     }
 
     @Test
+    public void shouldConsumeForCycle() {
+        final String code = "for (var i = 0; i < 10; i++) {}";
+        final Scanner sc = new Scanner(code, errorReporter);
+        final List<Token> tokens = sc.scanTokens();
+        assertEquals(18, tokens.size());
+        final Token token1 = tokens.get(0);
+        assertEquals(TokenType.FOR, token1.type);
+
+        final Token token2 = tokens.get(1);
+        assertEquals(TokenType.LEFT_PAREN, token2.type);
+
+        final Token token3 = tokens.get(2);
+        assertEquals(TokenType.VAR, token3.type);
+
+        final Token token4 = tokens.get(3);
+        assertEquals(TokenType.IDENTIFIER, token4.type);
+        assertEquals("i", token4.lexeme);
+
+        final Token token5 = tokens.get(4);
+        assertEquals(TokenType.EQUAL, token5.type);
+
+        final Token token6 = tokens.get(5);
+        assertEquals(TokenType.NUMBER, token6.type);
+        assertEquals("0", token6.lexeme);
+
+        final Token token7 = tokens.get(6);
+        assertEquals(TokenType.SEMICOLON, token7.type);
+
+        final Token token8 = tokens.get(7);
+        assertEquals(TokenType.IDENTIFIER, token8.type);
+        assertEquals("i", token8.lexeme);
+
+        final Token token9 = tokens.get(8);
+        assertEquals(TokenType.LESS, token9.type);
+
+        final Token token10 = tokens.get(9);
+        assertEquals(TokenType.NUMBER, token10.type);
+        assertEquals("10", token10.lexeme);
+
+        final Token token11 = tokens.get(10);
+        assertEquals(TokenType.SEMICOLON, token11.type);
+
+        final Token token12 = tokens.get(11);
+        assertEquals(TokenType.IDENTIFIER, token12.type);
+        assertEquals("i", token12.lexeme);
+
+        final Token token13 = tokens.get(12);
+        assertEquals(TokenType.PLUS, token13.type);
+
+        final Token token14 = tokens.get(13);
+        assertEquals(TokenType.PLUS, token14.type);
+
+        final Token token15 = tokens.get(14);
+        assertEquals(TokenType.RIGHT_PAREN, token15.type);
+
+        final Token token16 = tokens.get(15);
+        assertEquals(TokenType.LEFT_BRACE, token16.type);
+
+        final Token token17 = tokens.get(16);
+        assertEquals(TokenType.RIGHT_BRACE, token17.type);
+
+        final Token token18 = tokens.get(17);
+        assertEquals(TokenType.EOF, token18.type);
+    }
+
+    @Test
     public void shouldIgnoreBlockComments() {
-        String code = "var\n" +
+        final String code = "var\n" +
                 "/*\n" +
                 "* This is a block comment\n" +
                 "/* This is a nested /* This is hella nested code */ block comment */\n" +
                 "*/\n" +
                         "a";
-        Scanner sc = new Scanner(code, errorReporter);
-        List<Token> tokens = sc.scanTokens();
+        final Scanner sc = new Scanner(code, errorReporter);
+        final List<Token> tokens = sc.scanTokens();
         assertEquals(3, tokens.size());
         assertEquals(TokenType.VAR, tokens.get(0).type);
         assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
