@@ -1,13 +1,16 @@
-package main.parser;
+package interpreter.parser;
 
-import main.scanner.Token;
-import main.scanner.TokenType;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import interpreter.scanner.Token;
+import interpreter.scanner.TokenType;
 
 class ParserTest {
     @Test

@@ -1,4 +1,4 @@
-package main.errors;
+package interpreter.errors;
 
 import java.util.function.Consumer;
 

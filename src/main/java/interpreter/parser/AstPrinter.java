@@ -1,4 +1,4 @@
-package main.parser;
+package interpreter.parser;
 
 public final class AstPrinter implements Expr.Visitor<String> {
 

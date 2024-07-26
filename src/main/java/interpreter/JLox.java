@@ -1,12 +1,4 @@
-package main;
-
-import main.errors.ErrorReporter;
-import main.parser.AstPrinter;
-import main.parser.Expr;
-import main.parser.ParseError;
-import main.parser.Parser;
-import main.scanner.Scanner;
-import main.scanner.Token;
+package interpreter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +7,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import interpreter.errors.ErrorReporter;
+import interpreter.parser.AstPrinter;
+import interpreter.parser.Expr;
+import interpreter.parser.ParseError;
+import interpreter.parser.Parser;
+import interpreter.scanner.Scanner;
+import interpreter.scanner.Token;
 
 public class JLox {
 

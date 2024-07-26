@@ -1,4 +1,4 @@
-package main.scanner;
+package interpreter.scanner;
 
 public class Token {
     public final TokenType type;

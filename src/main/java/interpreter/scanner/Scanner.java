@@ -1,11 +1,11 @@
-package main.scanner;
+package interpreter.scanner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import main.errors.ErrorReporter;
+import interpreter.errors.ErrorReporter;
 
 public class Scanner {
     private final String source;

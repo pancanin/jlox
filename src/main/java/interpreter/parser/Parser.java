@@ -1,11 +1,11 @@
-package main.parser;
-
-import main.scanner.Token;
-import main.scanner.TokenType;
+package interpreter.parser;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+
+import interpreter.scanner.Token;
+import interpreter.scanner.TokenType;
 
 public class Parser {
 

@@ -1,2 +1,2 @@
 # Challenges
-- Rename the 'main' package to 'interpreter'
+- ~Rename the 'main' package to 'interpreter'~

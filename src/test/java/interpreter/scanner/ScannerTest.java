@@ -1,12 +1,12 @@
-package main.scanner;
+package interpreter.scanner;
 
-import main.errors.ErrorReporter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import interpreter.errors.ErrorReporter;
 
 class ScannerTest {
 
@@ -25,22 +25,22 @@ class ScannerTest {
         Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
 
-        Assertions.assertEquals(tokens.get(0).type, TokenType.LEFT_PAREN);
-        Assertions.assertEquals(tokens.get(1).type, TokenType.LEFT_PAREN);
-        Assertions.assertEquals(tokens.get(2).type, TokenType.RIGHT_PAREN);
-        Assertions.assertEquals(tokens.get(3).type, TokenType.RIGHT_PAREN);
-        Assertions.assertEquals(tokens.get(4).type, TokenType.LEFT_BRACE);
-        Assertions.assertEquals(tokens.get(5).type, TokenType.RIGHT_BRACE);
-        Assertions.assertEquals(tokens.get(6).type, TokenType.BANG);
-        Assertions.assertEquals(tokens.get(7).type, TokenType.STAR);
-        Assertions.assertEquals(tokens.get(8).type, TokenType.PLUS);
-        Assertions.assertEquals(tokens.get(9).type, TokenType.MINUS);
-        Assertions.assertEquals(tokens.get(10).type, TokenType.SLASH);
-        Assertions.assertEquals(tokens.get(11).type, TokenType.EQUAL);
-        Assertions.assertEquals(tokens.get(12).type, TokenType.LESS);
-        Assertions.assertEquals(tokens.get(13).type, TokenType.GREATER);
-        Assertions.assertEquals(tokens.get(14).type, TokenType.LESS_EQUAL);
-        Assertions.assertEquals(tokens.get(15).type, TokenType.EQUAL_EQUAL);
+        assertEquals(tokens.get(0).type, TokenType.LEFT_PAREN);
+        assertEquals(tokens.get(1).type, TokenType.LEFT_PAREN);
+        assertEquals(tokens.get(2).type, TokenType.RIGHT_PAREN);
+        assertEquals(tokens.get(3).type, TokenType.RIGHT_PAREN);
+        assertEquals(tokens.get(4).type, TokenType.LEFT_BRACE);
+        assertEquals(tokens.get(5).type, TokenType.RIGHT_BRACE);
+        assertEquals(tokens.get(6).type, TokenType.BANG);
+        assertEquals(tokens.get(7).type, TokenType.STAR);
+        assertEquals(tokens.get(8).type, TokenType.PLUS);
+        assertEquals(tokens.get(9).type, TokenType.MINUS);
+        assertEquals(tokens.get(10).type, TokenType.SLASH);
+        assertEquals(tokens.get(11).type, TokenType.EQUAL);
+        assertEquals(tokens.get(12).type, TokenType.LESS);
+        assertEquals(tokens.get(13).type, TokenType.GREATER);
+        assertEquals(tokens.get(14).type, TokenType.LESS_EQUAL);
+        assertEquals(tokens.get(15).type, TokenType.EQUAL_EQUAL);
     }
 
     @Test
@@ -48,12 +48,12 @@ class ScannerTest {
         String code = "=========";
         Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
-        Assertions.assertEquals(6, tokens.size());
-        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(0).type);
-        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(1).type);
-        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(2).type);
-        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
-        Assertions.assertEquals(TokenType.EQUAL, tokens.get(4).type);
+        assertEquals(6, tokens.size());
+        assertEquals(TokenType.EQUAL_EQUAL, tokens.get(0).type);
+        assertEquals(TokenType.EQUAL_EQUAL, tokens.get(1).type);
+        assertEquals(TokenType.EQUAL_EQUAL, tokens.get(2).type);
+        assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
+        assertEquals(TokenType.EQUAL, tokens.get(4).type);
     }
 
     @Test
@@ -62,22 +62,22 @@ class ScannerTest {
         Scanner scanner = new Scanner(code, errorReporter);
         List<Token> tokens = scanner.scanTokens();
 
-        Assertions.assertEquals(TokenType.IF, tokens.get(0).type);
-        Assertions.assertEquals(TokenType.LEFT_PAREN, tokens.get(1).type);
-        Assertions.assertEquals(TokenType.NUMBER, tokens.get(2).type);
-        Assertions.assertEquals(12.23, tokens.get(2).literal);
-        Assertions.assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
-        Assertions.assertEquals(TokenType.NUMBER, tokens.get(4).type);
-        Assertions.assertEquals(12.0, tokens.get(4).literal);
-        Assertions.assertEquals(TokenType.RIGHT_PAREN, tokens.get(5).type);
-        Assertions.assertEquals(TokenType.LEFT_BRACE, tokens.get(6).type);
-        Assertions.assertEquals(TokenType.PRINT, tokens.get(7).type);
-        Assertions.assertEquals(TokenType.LEFT_PAREN, tokens.get(8).type);
-        Assertions.assertEquals(TokenType.STRING, tokens.get(9).type);
-        Assertions.assertEquals("hi", tokens.get(9).literal);
-        Assertions.assertEquals(TokenType.RIGHT_PAREN, tokens.get(10).type);
-        Assertions.assertEquals(TokenType.SEMICOLON, tokens.get(11).type);
-        Assertions.assertEquals(TokenType.RIGHT_BRACE, tokens.get(12).type);
+        assertEquals(TokenType.IF, tokens.get(0).type);
+        assertEquals(TokenType.LEFT_PAREN, tokens.get(1).type);
+        assertEquals(TokenType.NUMBER, tokens.get(2).type);
+        assertEquals(12.23, tokens.get(2).literal);
+        assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
+        assertEquals(TokenType.NUMBER, tokens.get(4).type);
+        assertEquals(12.0, tokens.get(4).literal);
+        assertEquals(TokenType.RIGHT_PAREN, tokens.get(5).type);
+        assertEquals(TokenType.LEFT_BRACE, tokens.get(6).type);
+        assertEquals(TokenType.PRINT, tokens.get(7).type);
+        assertEquals(TokenType.LEFT_PAREN, tokens.get(8).type);
+        assertEquals(TokenType.STRING, tokens.get(9).type);
+        assertEquals("hi", tokens.get(9).literal);
+        assertEquals(TokenType.RIGHT_PAREN, tokens.get(10).type);
+        assertEquals(TokenType.SEMICOLON, tokens.get(11).type);
+        assertEquals(TokenType.RIGHT_BRACE, tokens.get(12).type);
     }
 
     @Test
@@ -86,9 +86,9 @@ class ScannerTest {
         Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
 
-        Assertions.assertEquals(TokenType.STRING, tokens.get(0).type);
-        Assertions.assertEquals("Hello this is a string literal", tokens.get(0).literal);
-        Assertions.assertEquals("\"Hello this is a string literal\"", tokens.get(0).lexeme);
+        assertEquals(TokenType.STRING, tokens.get(0).type);
+        assertEquals("Hello this is a string literal", tokens.get(0).literal);
+        assertEquals("\"Hello this is a string literal\"", tokens.get(0).lexeme);
     }
 
     @Test
@@ -98,9 +98,9 @@ class ScannerTest {
         Scanner sc = new Scanner(code, errorReporter);
         List<Token> tokens = sc.scanTokens();
 
-        Assertions.assertEquals(TokenType.STRING, tokens.get(0).type);
-        Assertions.assertEquals("Hello this is a string\n literal", tokens.get(0).literal);
-        Assertions.assertEquals("\"Hello this is a string\n literal\"", tokens.get(0).lexeme);
+        assertEquals(TokenType.STRING, tokens.get(0).type);
+        assertEquals("Hello this is a string\n literal", tokens.get(0).literal);
+        assertEquals("\"Hello this is a string\n literal\"", tokens.get(0).lexeme);
     }
 
     @Test

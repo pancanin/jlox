@@ -1,6 +1,6 @@
-package main.parser;
+package interpreter.parser;
 
-import main.scanner.Token;
+import interpreter.scanner.Token;
 
 public class ParseError extends RuntimeException {
     private Token token;

@@ -1,4 +1,4 @@
-package main.errors;
+package interpreter.errors;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,10 @@
-package main.parser;
+package interpreter.parser;
 
-import main.scanner.Token;
-import main.scanner.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import interpreter.scanner.Token;
+import interpreter.scanner.TokenType;
 
 class AstPrinterTest {
 
