@@ -7,15 +7,32 @@ import java.util.function.Supplier;
 import interpreter.scanner.Token;
 import interpreter.scanner.TokenType;
 
+/**
+ * Accepts a list of tokens and creates expression trees - AST.
+ * @author Valeri Hristov (valericfbg@gmail.com)
+ */
 public class Parser {
 
+    /**
+     * Keep a reference to the list of tokens, so we can iterate them one by one, do look-aheads and look-behinds.
+     */
     private final List<Token> tokens;
-    private int current = 0;
-    private boolean hasError = false;
+
+    /**
+     * The index of the token we reached so far.
+     */
+    private int currentIdx;
+
+    /**
+     * If we have an error during parsing, this flag will be set to true and the 'error' field will contain the error.
+     */
+    private boolean hasError;
     private ParseError error;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+        currentIdx = 0;
+        hasError = false;
     }
 
     public Expr parse() {
@@ -36,31 +53,50 @@ public class Parser {
         return error;
     }
 
-    // expression     → equality ;
+    /**
+     * Entrypoint of parsing our tokens into AST.
+     * This method should call the highest-precedence expression.
+     * The idea is to descend down to the lowest precedence expression, for which we can immediately know the value, thus stop the recursion and then
+     * build the tree on the way back.
+     * @return The root of the AST.
+     */
     private Expr expression() {
         return equality();
     }
 
-    // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+    /**
+     * Tries to parse an equality expression, for example, true == false.
+     * If it cannot match an equality expression it moves on to the next precedence expression - comparison.
+     * @return The node in the tree for the parsed equality expression.
+     */
     private Expr equality() {
         return parseBinaryExpr(this::comparison, TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL);
     }
 
-    // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+    /**
+     * A comparison is something like, myvar > 0
+     */
     private Expr comparison() {
         return parseBinaryExpr(this::term, TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL);
     }
 
-    // term           → factor ( ( "-" | "+" ) factor )* ;
+    /**
+     * This is for expressions like, 1 + 1, 3 - 2
+     */
     private Expr term() {
         return parseBinaryExpr(this::factor, TokenType.PLUS, TokenType.MINUS);
     }
 
+    /**
+     * This is for expressions like, 42 * 3, 11 / 5
+     */
     private Expr factor() {
         return parseBinaryExpr(this::unary, TokenType.STAR, TokenType.SLASH);
     }
 
-    // unary          → ( "!" | "-" ) unary | primary ;
+    /**
+     * Example unary expression: !true, -2, -myNumber 
+     */
     private Expr unary() {
         if (matchAdv(TokenType.BANG, TokenType.MINUS)) {
             Token op = previous();
@@ -88,10 +124,13 @@ public class Parser {
     }
 
     /**
-     * Abstracts repetitive code around binary expressions
-     * @param next the next, higher precedence expression
+     * Abstracts repetitive code around binary expressions.
+     * Binary expressions are left-associative - if multiple equality expressions, like 'true == false == true == false', then we will
+     * build the first equality from the left-most expression and then the result of that will be the left operand of another equality expression with the right hand side.
+     * So, '(((true == false) == true) == false)'.
+     * @param next the next, lower precedence expression.
      * @param types tokens to match for the particular expression.
-     * @return binary expression, could be nested
+     * @return binary expression, could be nested.
      */
     private Expr parseBinaryExpr(Supplier<Expr> next, TokenType... types) {
         Expr left = next.get();
@@ -123,7 +162,7 @@ public class Parser {
 
     private boolean match(TokenType... types) {
         if (!more()) { return false; }
-        return Arrays.stream(types).anyMatch(type -> tokens.get(current).type == type);
+        return Arrays.stream(types).anyMatch(type -> tokens.get(currentIdx).type == type);
     }
 
     private boolean matchAdv(TokenType... types) {
@@ -135,18 +174,18 @@ public class Parser {
     }
 
     private void advance() {
-        current++;
+        currentIdx++;
     }
 
     private boolean more() {
-        return current < tokens.size() && tokens.get(current).type != TokenType.EOF;
+        return currentIdx < tokens.size() && tokens.get(currentIdx).type != TokenType.EOF;
     }
 
     private Token current() {
-        return tokens.get(current);
+        return tokens.get(currentIdx);
     }
 
     private Token previous() {
-        return tokens.get(current - 1);
+        return tokens.get(currentIdx - 1);
     }
 }
