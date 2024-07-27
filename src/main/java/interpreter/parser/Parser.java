@@ -8,7 +8,7 @@ import interpreter.scanner.Token;
 import interpreter.scanner.TokenType;
 
 /**
- * Accepts a list of tokens and creates expression trees - AST.
+ * Accepts a list of tokens and creates expression tree - AST.
  * @author Valeri Hristov (valericfbg@gmail.com)
  */
 public class Parser {
@@ -102,9 +102,26 @@ public class Parser {
             Token op = previous();
             return new Expr.Unary(op, unary());
         }
+        return grouping();
+    }
+
+    /**
+     * These are expressions in the form: (a < 0) && false -> the round parenthesis are giving more precedence to an expression. 
+     * @return A grouping expression or makes a recursive call to primary()
+     */
+    private Expr grouping() {
+        if (matchAdv(TokenType.LEFT_PAREN)) {
+            Expr expr = expression();
+            consume(TokenType.RIGHT_PAREN, "Expected closing )");
+            return new Expr.Grouping(expr);
+        }
         return primary();
     }
 
+    /**
+     * Primary expression is an expression which value we can know immediately.
+     * @return A literal expression.
+     */
     private Expr primary() {
         if (matchAdv(TokenType.FALSE)) return new Expr.Literal(false);
         if (matchAdv(TokenType.TRUE)) return new Expr.Literal(true);
@@ -114,12 +131,7 @@ public class Parser {
             return new Expr.Literal(previous().literal);
         }
 
-        if (matchAdv(TokenType.LEFT_PAREN)) {
-            Expr expr = expression();
-            consume(TokenType.RIGHT_PAREN, "Expected closing )");
-            return new Expr.Grouping(expr);
-        }
-
+        // We could not match anything, so we throw an error.
         throw new ParseError(current(), "Expected an expression");
     }
 
