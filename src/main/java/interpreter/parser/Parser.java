@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import interpreter.errors.ParseError;
+import interpreter.errors.UnexpectedTokenError;
 import interpreter.scanner.Token;
 import interpreter.scanner.TokenType;
 
@@ -35,9 +37,20 @@ public class Parser {
         hasError = false;
     }
 
+    /**
+     * The entrypoint of the parser.
+     * @return The Expr tree.
+     */
     public Expr parse() {
         try {
-            return expression();
+            final Expr e = expression();
+
+            // If there are more tokens after we constructed the tree, there must be something wrong with the script.
+            if (more()) {
+                throw new UnexpectedTokenError(current());
+            }
+
+            return e;
         } catch (ParseError e) {
             hasError = true;
             error = e;
@@ -95,10 +108,10 @@ public class Parser {
     }
 
     /**
-     * Example unary expression: !true, -2, -myNumber 
+     * Example unary expression: !true, -2, -myNumber, +1
      */
     private Expr unary() {
-        if (matchAdv(TokenType.BANG, TokenType.MINUS)) {
+        if (matchTokensAdvance(TokenType.BANG, TokenType.MINUS, TokenType.PLUS)) {
             Token op = previous();
             return new Expr.Unary(op, unary());
         }
@@ -110,9 +123,9 @@ public class Parser {
      * @return A grouping expression or makes a recursive call to primary()
      */
     private Expr grouping() {
-        if (matchAdv(TokenType.LEFT_PAREN)) {
+        if (matchTokensAdvance(TokenType.LEFT_PAREN)) {
             Expr expr = expression();
-            consume(TokenType.RIGHT_PAREN, "Expected closing )");
+            consumeToken(TokenType.RIGHT_PAREN, "Expected closing ')' at the end of grouping expression.");
             return new Expr.Grouping(expr);
         }
         return primary();
@@ -123,11 +136,11 @@ public class Parser {
      * @return A literal expression.
      */
     private Expr primary() {
-        if (matchAdv(TokenType.FALSE)) return new Expr.Literal(false);
-        if (matchAdv(TokenType.TRUE)) return new Expr.Literal(true);
-        if (matchAdv(TokenType.NIL)) return new Expr.Literal(null);
+        if (matchTokensAdvance(TokenType.FALSE)) return new Expr.Literal(false);
+        if (matchTokensAdvance(TokenType.TRUE)) return new Expr.Literal(true);
+        if (matchTokensAdvance(TokenType.NIL)) return new Expr.Literal(null);
 
-        if (matchAdv(TokenType.STRING, TokenType.NUMBER)) {
+        if (matchTokensAdvance(TokenType.STRING, TokenType.NUMBER)) {
             return new Expr.Literal(previous().literal);
         }
 
@@ -147,7 +160,7 @@ public class Parser {
     private Expr parseBinaryExpr(Supplier<Expr> next, TokenType... types) {
         Expr left = next.get();
 
-        while (matchAdv(types)) {
+        while (matchTokensAdvance(types)) {
             Token op = previous();
             Expr right = next.get();
             left = new Expr.Binary(left, op, right);
@@ -163,7 +176,7 @@ public class Parser {
      * @param errorMsg When the token is not there, provide an appropriate error message to put in the Exception object.
      * @throws ParseError thrown if the expected token is not in the expected place in the source code.
      */
-    private void consume(TokenType type, String errorMsg) throws ParseError {
+    private void consumeToken(TokenType type, String errorMsg) throws ParseError {
         if (more() && current().type == type) {
             advance();
             return;
@@ -172,13 +185,13 @@ public class Parser {
         throw new ParseError(previous(), errorMsg);
     }
 
-    private boolean match(TokenType... types) {
+    private boolean matchTokens(TokenType... types) {
         if (!more()) { return false; }
         return Arrays.stream(types).anyMatch(type -> tokens.get(currentIdx).type == type);
     }
 
-    private boolean matchAdv(TokenType... types) {
-        if (match(types)) {
+    private boolean matchTokensAdvance(TokenType... types) {
+        if (matchTokens(types)) {
             advance();
             return true;
         }

@@ -1,4 +1,4 @@
-package interpreter.parser;
+package interpreter.errors;
 
 import interpreter.scanner.Token;
 

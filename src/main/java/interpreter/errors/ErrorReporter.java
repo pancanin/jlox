@@ -2,6 +2,9 @@ package interpreter.errors;
 
 import java.util.function.Consumer;
 
+/**
+ * Util for logging that can be configured with an output stream and a format for the message.
+ */
 public final class ErrorReporter {
     private String format = "[line %d] Error %s: %s";
     private Consumer<String> reporterFunc;

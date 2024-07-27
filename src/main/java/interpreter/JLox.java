@@ -9,9 +9,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import interpreter.errors.ErrorReporter;
+import interpreter.errors.ParseError;
 import interpreter.parser.AstPrinter;
 import interpreter.parser.Expr;
-import interpreter.parser.ParseError;
 import interpreter.parser.Parser;
 import interpreter.scanner.Scanner;
 import interpreter.scanner.Token;
