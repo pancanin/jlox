@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jlox.errors.ErrorReporter;
+import jlox.errors.ErrorLogger;
 
 /**
  * Turns source code into a list of tokens.
@@ -15,7 +15,7 @@ public class Scanner {
     private final String source;
     private final List<Token> tokens;
 
-    private final ErrorReporter errorReporter;
+    private final ErrorLogger errorLogger;
 
     /**
      * Used to keep track of the start of a lexeme and then using this index to extract the whole lexeme from the source code.
@@ -59,10 +59,10 @@ public class Scanner {
         keywords.put("while",  TokenType.WHILE);
     }
 
-    public Scanner(String source, ErrorReporter errorReporter) {
+    public Scanner(String source, ErrorLogger errorLogger) {
         this.source = source;
         this.tokens = new ArrayList<>();
-        this.errorReporter = errorReporter;
+        this.errorLogger = errorLogger;
     }
 
     /**
@@ -153,7 +153,7 @@ public class Scanner {
                     identifier();
                     break;
                 }
-                errorReporter.report(line, c + "", String.format("Unexpected symbol '%c'", c));
+                errorLogger.report(line, c + "", String.format("Unexpected symbol '%c'", c));
                 break;
         }
     }
@@ -168,7 +168,7 @@ public class Scanner {
         }
 
         if (isAtEnd()) {
-            errorReporter.report(line, "", "Unterminated string");
+            errorLogger.report(line, "", "Unterminated string");
             return;
         }
 
@@ -186,7 +186,7 @@ public class Scanner {
         while (!isAtEnd() && Character.isDigit(peek())) {
             advance();
             if (!isAtEnd() && Character.isAlphabetic(peek())) {
-                errorReporter.report(line, "", "Unexpected alphabetic character in number literal: " + peek());
+                errorLogger.report(line, "", "Unexpected alphabetic character in number literal: " + peek());
                 consumeUntilSpace();
                 return;
             }

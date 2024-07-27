@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
 
-class ErrorReporterTest {
+class ErrorLoggerTest {
 
     @Test
     void reportShouldDisplayWithCorrectFormat() {
@@ -15,7 +15,7 @@ class ErrorReporterTest {
         Consumer<String> consumer = (String s) -> {
             Assertions.assertEquals("[line 13] Error ???: Unexpected token", s);
         };
-        ErrorReporter reporter = new ErrorReporter(consumer);
+        ErrorLogger reporter = new ErrorLogger(consumer);
         reporter.report(line, where, msg);
     }
 }

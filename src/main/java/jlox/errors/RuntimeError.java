@@ -3,7 +3,7 @@ package jlox.errors;
 import jlox.scanner.Token;
 
 /**
- * Error during interpretation.
+ * Represents an error during interpretation.
  */
 public class RuntimeError extends RuntimeException {
     private final Token token;

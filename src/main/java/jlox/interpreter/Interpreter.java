@@ -1,6 +1,6 @@
 package jlox.interpreter;
 
-import jlox.errors.ErrorReporter;
+import jlox.errors.ErrorLogger;
 import jlox.errors.RuntimeError;
 import jlox.parser.Expr;
 import jlox.parser.Expr.Binary;
@@ -14,10 +14,10 @@ import jlox.scanner.TokenType;
  * Evaluates AST and produces a value or side effects.
  */
 public class Interpreter implements Expr.Visitor<Object> {
-    private final ErrorReporter errorReporter;
+    private final ErrorLogger errorLogger;
 
-    public Interpreter(ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
+    public Interpreter(ErrorLogger errorLogger) {
+        this.errorLogger = errorLogger;
     }
 
     public Object interpret(Expr expr) {
@@ -25,7 +25,7 @@ public class Interpreter implements Expr.Visitor<Object> {
             final Object res = evaluate(expr);
             return res;
         } catch (RuntimeError e) {
-            errorReporter.report(e.getToken().line, null, e.getMessage());
+            errorLogger.report(e.getToken().line, null, e.getMessage());
             return null;
         }
     }

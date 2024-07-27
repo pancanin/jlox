@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import jlox.errors.ErrorReporter;
+import jlox.errors.ErrorLogger;
 import jlox.errors.ParseError;
 import jlox.interpreter.Interpreter;
 import jlox.parser.AstPrinter;
@@ -21,10 +21,10 @@ public class JLox {
 
     private static boolean hadError;
 
-    private static ErrorReporter errorReporter;
+    private static ErrorLogger errorLogger;
 
     static {
-        errorReporter = new ErrorReporter(System.out::println);
+        errorLogger = new ErrorLogger(System.out::println);
     }
 
     public static void main(String[] args) throws IOException {
@@ -61,19 +61,19 @@ public class JLox {
     }
 
     private static void run(String source) {
-        Scanner scanner = new Scanner(source, errorReporter);
+        Scanner scanner = new Scanner(source, errorLogger);
         List<Token> tokens = scanner.scanTokens();
         Parser p = new Parser(tokens);
         Expr expr = p.parse();
 
         if (p.hasError()) {
             ParseError err = p.getError();
-            errorReporter.report(err.getToken().line, err.getToken().lexeme, err.getMessage());
+            errorLogger.report(err.getToken().line, err.getToken().lexeme, err.getMessage());
             hadError = true;
             return;
         }
 
-        Interpreter interpreter = new Interpreter(errorReporter);
+        Interpreter interpreter = new Interpreter(errorLogger);
         interpreter.interpret(expr);
     }
 }

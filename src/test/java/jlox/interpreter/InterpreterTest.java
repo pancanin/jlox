@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import jlox.parser.TokenFactory;
 import jlox.scanner.TokenType;
-import jlox.errors.ErrorReporter;
+import jlox.errors.ErrorLogger;
 import jlox.parser.Expr;
 
 /**
@@ -16,16 +16,16 @@ import jlox.parser.Expr;
  */
 class InterpreterTest {
 
-    static ErrorReporter errorReporter;
+    static ErrorLogger errorLogger;
 
     static {
-        errorReporter = new ErrorReporter();
+        errorLogger = new ErrorLogger();
     }
 
     @Test
     public void testUnaryMinusWithNumber() {
         final Expr e = new Expr.Unary(TokenFactory.make(TokenType.MINUS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorReporter);
+        final Interpreter i = new Interpreter(errorLogger);
 
         final Object res = i.interpret(e);
 
@@ -36,7 +36,7 @@ class InterpreterTest {
     @Test
     public void testUnaryNegateWithBool() {
         final Expr e = new Expr.Unary(TokenFactory.make(TokenType.BANG), new Expr.Literal(true));
-        final Interpreter i = new Interpreter(errorReporter);
+        final Interpreter i = new Interpreter(errorLogger);
         
         final Object res = i.interpret(e);
 
