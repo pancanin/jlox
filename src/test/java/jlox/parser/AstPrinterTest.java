@@ -1,10 +1,10 @@
-package interpreter.parser;
+package jlox.parser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import interpreter.scanner.Token;
-import interpreter.scanner.TokenType;
+import jlox.scanner.Token;
+import jlox.scanner.TokenType;
 
 class AstPrinterTest {
 

@@ -1,6 +1,6 @@
-package interpreter.errors;
+package jlox.errors;
 
-import interpreter.scanner.Token;
+import jlox.scanner.Token;
 
 /**
  * This is a type of runtime error and usually happens when the syntax of the code is incorrect.

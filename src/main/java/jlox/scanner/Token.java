@@ -1,4 +1,4 @@
-package interpreter.scanner;
+package jlox.scanner;
 
 public class Token {
     public final TokenType type;

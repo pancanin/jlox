@@ -1,11 +1,11 @@
-package interpreter.scanner;
+package jlox.scanner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import interpreter.errors.ErrorReporter;
+import jlox.errors.ErrorReporter;
 
 /**
  * Turns source code into a list of tokens.
@@ -159,7 +159,7 @@ public class Scanner {
     }
 
     /**
-     * Comsumes a string, which is a character sequence between double quotes.
+     * Consumes a string, which is a character sequence between double quotes.
      */
     private void string() {
         while (!isAtEnd() && peek() != '"') {
@@ -253,12 +253,12 @@ public class Scanner {
     }
 
     /**
-     * Adds a token with a literal value. Extracts the string representation of the value from the source code.
+     * Adds a token to the list of tokens with a literal value. Extracts the string representation of the value from the source code.
      * @param type The token type. Could be identifier, string, number, etc.
      * @param literal The name of the identifier, for example or the value of the integer or string variable.
      */
     private void addToken(TokenType type, Object literal) {
-        String text = source.substring(start, current);
+        final String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
     }
 

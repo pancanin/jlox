@@ -1,4 +1,4 @@
-package interpreter.scanner;
+package jlox.scanner;
 
 public enum TokenType {
     // Single-character tokens.

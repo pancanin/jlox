@@ -1,4 +1,4 @@
-package interpreter.scanner;
+package jlox.scanner;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package interpreter.parser;
+package jlox.parser;
 
 /**
  * A bit of thoughs on the Visitor pattern.

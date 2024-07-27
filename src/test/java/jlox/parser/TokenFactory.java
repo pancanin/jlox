@@ -1,8 +1,8 @@
-package interpreter.parser;
+package jlox.parser;
 
-import interpreter.scanner.Token;
-import interpreter.scanner.TokenLexemeResolver;
-import interpreter.scanner.TokenType;
+import jlox.scanner.Token;
+import jlox.scanner.TokenLexemeResolver;
+import jlox.scanner.TokenType;
 
 /**
  * Helper class for creating tokens of certain type and abstracts some properties which are not important for some tests.

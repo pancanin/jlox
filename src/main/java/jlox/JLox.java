@@ -1,4 +1,4 @@
-package interpreter;
+package jlox;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,13 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import interpreter.errors.ErrorReporter;
-import interpreter.errors.ParseError;
-import interpreter.parser.AstPrinter;
-import interpreter.parser.Expr;
-import interpreter.parser.Parser;
-import interpreter.scanner.Scanner;
-import interpreter.scanner.Token;
+import jlox.errors.ErrorReporter;
+import jlox.errors.ParseError;
+import jlox.parser.AstPrinter;
+import jlox.parser.Expr;
+import jlox.parser.Parser;
+import jlox.scanner.Scanner;
+import jlox.scanner.Token;
 
 public class JLox {
 
@@ -67,7 +67,7 @@ public class JLox {
 
         if (p.hasError()) {
             ParseError err = p.getError();
-            errorReporter.report(err.getToken().line, err.getToken().lexeme, err.getMsg());
+            errorReporter.report(err.getToken().line, err.getToken().lexeme, err.getMessage());
             hadError = true;
             return;
         }

@@ -1,4 +1,4 @@
-package interpreter.errors;
+package jlox.errors;
 
 import java.util.function.Consumer;
 

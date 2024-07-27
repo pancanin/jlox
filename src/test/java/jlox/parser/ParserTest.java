@@ -1,4 +1,4 @@
-package interpreter.parser;
+package jlox.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import interpreter.scanner.Token;
-import interpreter.scanner.TokenType;
+import jlox.scanner.Token;
+import jlox.scanner.TokenType;
 
 class ParserTest {
     @Test
@@ -116,13 +116,13 @@ class ParserTest {
                 TokenFactory.make(TokenType.NUMBER, "3"),
                 TokenFactory.make(TokenType.GREATER),
                 TokenFactory.make(TokenType.NUMBER, "4"),
-                new Token(TokenType.EQUAL_EQUAL, "==", "==", 1),
+                TokenFactory.make(TokenType.EQUAL_EQUAL, "=="),
                 TokenFactory.make(TokenType.NUMBER, "1"),
                 TokenFactory.make(TokenType.LESS),
                 TokenFactory.make(TokenType.NUMBER, "2"),
                 TokenFactory.make(TokenType.STAR),
                 TokenFactory.make(TokenType.NUMBER, "3"),
-                new Token(TokenType.EOF, "", "", 1)
+                TokenFactory.make(TokenType.EOF, "")
         );
         final Parser p = new Parser(ts);
 
@@ -199,5 +199,48 @@ class ParserTest {
         final Expr result = p.parse();
 
         assertNotNull(result);
+    }
+
+    @Test
+    public void testIncorrectComparisonExpr() {
+        final List<Token> ts = Arrays.asList(
+            TokenFactory.make(TokenType.NUMBER, "0"),
+            TokenFactory.make(TokenType.LESS),
+            TokenFactory.make(TokenType.GREATER),
+            TokenFactory.make(TokenType.NUMBER, "1")  
+        );
+        final Parser p = new Parser(ts);
+        final Expr result = p.parse();
+
+        assertNull(result);
+        assertTrue(p.hasError());
+    }
+
+    @Test
+    public void testIncorrectEqualityExpr() {
+        final List<Token> ts = Arrays.asList(
+            TokenFactory.make(TokenType.NUMBER, "0"),
+            TokenFactory.make(TokenType.BANG_EQUAL, "!="),
+            TokenFactory.make(TokenType.EQUAL),
+            TokenFactory.make(TokenType.NUMBER, "1")
+        );
+        final Parser p = new Parser(ts);
+        final Expr result = p.parse();
+
+        assertNull(result);
+        assertTrue(p.hasError());
+    }
+
+    @Test
+    public void testBinaryExprWithoutLeftSide() {
+        final List<Token> ts = Arrays.asList(
+            TokenFactory.make(TokenType.STAR),
+            TokenFactory.make(TokenType.NUMBER, "4")
+        );
+        final Parser p = new Parser(ts);
+        final Expr result = p.parse();
+
+        assertNull(result);
+        assertTrue(p.hasError());
     }
 }

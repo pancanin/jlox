@@ -1,13 +1,13 @@
-package interpreter.parser;
+package jlox.parser;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import interpreter.errors.ParseError;
-import interpreter.errors.UnexpectedTokenError;
-import interpreter.scanner.Token;
-import interpreter.scanner.TokenType;
+import jlox.errors.ParseError;
+import jlox.errors.UnexpectedTokenError;
+import jlox.scanner.Token;
+import jlox.scanner.TokenType;
 
 /**
  * Accepts a list of tokens and creates expression tree - AST.

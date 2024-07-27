@@ -1,4 +1,4 @@
-package interpreter.scanner;
+package jlox.scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import interpreter.errors.ErrorReporter;
+import jlox.errors.ErrorReporter;
 
 class ScannerTest {
 
