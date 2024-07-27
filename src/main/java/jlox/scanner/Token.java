@@ -16,14 +16,4 @@ public class Token {
     public Token(TokenType type, String lexeme, int line) {
         this(type, lexeme, lexeme, line);
     }
-
-    @Override
-    public String toString() {
-        return "Token{" +
-                "type=" + type +
-                ", lexeme='" + lexeme + '\'' +
-                ", literal=" + literal +
-                ", line=" + line +
-                '}';
-    }
 }

@@ -147,10 +147,10 @@ public class Interpreter implements Expr.Visitor<Object> {
         final boolean rightIsNumber = rightVal instanceof Double;
 
         if (leftIsString && rightIsNumber) {
-            return String.format("%s%d", leftVal, rightVal);
+            return (String)leftVal + rightVal.toString();
         }
         else if (leftIsString && rightIsString) {
-            return (String)leftVal + rightVal;
+            return (String)leftVal + (String)rightVal;
         }
         else if (leftIsNumber && rightIsString) {
             throw new RuntimeError(plus, "Invalid operation between left-hand side number and right-hand side string");

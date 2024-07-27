@@ -14,7 +14,6 @@ import jlox.errors.ErrorLogger;
 public class Scanner {
     private final String source;
     private final List<Token> tokens;
-
     private final ErrorLogger errorLogger;
 
     /**
