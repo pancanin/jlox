@@ -104,6 +104,7 @@ public class GenerateVisitorAstCode {
         writer.append(" {")
         .append(System.lineSeparator())
         .append('\t')
+        .append("public ")
         .append(className)
         .append('(')
         .append(String.join(", ", fields))

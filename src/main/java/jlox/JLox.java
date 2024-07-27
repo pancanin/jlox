@@ -10,6 +10,7 @@ import java.util.List;
 
 import jlox.errors.ErrorReporter;
 import jlox.errors.ParseError;
+import jlox.interpreter.Interpreter;
 import jlox.parser.AstPrinter;
 import jlox.parser.Expr;
 import jlox.parser.Parser;
@@ -72,6 +73,7 @@ public class JLox {
             return;
         }
 
-        System.out.println(new AstPrinter().print(expr));
+        Interpreter interpreter = new Interpreter(errorReporter);
+        interpreter.interpret(expr);
     }
 }

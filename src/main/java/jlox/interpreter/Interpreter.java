@@ -1,5 +1,6 @@
 package jlox.interpreter;
 
+import jlox.errors.ErrorReporter;
 import jlox.errors.RuntimeError;
 import jlox.parser.Expr;
 import jlox.parser.Expr.Binary;
@@ -13,6 +14,21 @@ import jlox.scanner.TokenType;
  * Evaluates AST and produces a value or side effects.
  */
 public class Interpreter implements Expr.Visitor<Object> {
+    private final ErrorReporter errorReporter;
+
+    public Interpreter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
+    }
+
+    public Object interpret(Expr expr) {
+        try {
+            final Object res = evaluate(expr);
+            return res;
+        } catch (RuntimeError e) {
+            errorReporter.report(e.getToken().line, null, e.getMessage());
+            return null;
+        }
+    }
 
     @Override
     public Object visitLiteralExpr(Literal expr) {
@@ -29,20 +45,48 @@ public class Interpreter implements Expr.Visitor<Object> {
         final Object leftVal = evaluate(expr.left);
         final Object rightVal = evaluate(expr.right);
 
+        // Some of the operators can work only for numbers.
         switch (expr.operator.type) {
-            case TokenType.PLUS:
-                return binaryPlus(expr.operator, leftVal, rightVal);
             case TokenType.MINUS:
-                checkNumberOperand(expr.operator, val);
-                return -(Double)val;
-            case TokenType.BANG:
-                checkBoolOperand(expr.operator, val);
-                return !isTruthy(val);
+            case TokenType.SLASH:
+            case TokenType.STAR:
+            case TokenType.LESS:
+            case TokenType.LESS_EQUAL:
+            case TokenType.GREATER:
+            case TokenType.GREATER_EQUAL:
+                checkNumberOperand(expr.operator, leftVal);
+                checkNumberOperand(expr.operator, rightVal);
+                break;
             default:
                 break;
         }
 
-        throw new RuntimeError(expr.operator, "Unimplemented unary operator.");
+        switch (expr.operator.type) {
+            case TokenType.PLUS:
+                return performBinaryPlus(expr.operator, leftVal, rightVal);
+            case TokenType.MINUS:
+                return (Double)leftVal - (Double)rightVal;
+            case TokenType.SLASH:
+                return (Double)leftVal / (Double)rightVal;
+            case TokenType.STAR:
+                return (Double)leftVal * (Double)rightVal;
+            case TokenType.LESS:
+                return (Double)leftVal < (Double)rightVal;
+            case TokenType.LESS_EQUAL:
+                return (Double)leftVal <= (Double)rightVal;
+            case TokenType.GREATER:
+                return (Double)leftVal > (Double)rightVal;
+            case TokenType.GREATER_EQUAL:
+                return (Double)leftVal >= (Double)rightVal;
+            case TokenType.EQUAL_EQUAL:
+                return isEqual(leftVal, rightVal);
+            case TokenType.BANG_EQUAL:
+                return !isEqual(leftVal, rightVal);
+            default:
+                break;
+        }
+
+        throw new RuntimeError(expr.operator, "Unimplemented binary operator.");
     }
 
     @Override
@@ -96,7 +140,7 @@ public class Interpreter implements Expr.Visitor<Object> {
      * @param rightVal THe right-hand side of the binary expression.
      * @return Returns the result of performing the + operation on the two values.
      */
-    private Object binaryPlus(Token plus, Object leftVal, Object rightVal) {
+    private Object performBinaryPlus(Token plus, Object leftVal, Object rightVal) {
         final boolean leftIsString = leftVal instanceof String;
         final boolean leftIsNumber = leftVal instanceof Double;
         final boolean rightIsString = rightVal instanceof String;
@@ -118,5 +162,11 @@ public class Interpreter implements Expr.Visitor<Object> {
             final String msg = String.format("Unsupported operation between values: '%s' and '%s'.", leftVal, rightVal);
             throw new RuntimeError(plus, msg);
         }
+    }
+
+    private boolean isEqual(Object o1, Object o2) {
+        if (o1 == null && o2 == null) return true;
+        if (o1 == null) return false;
+        return o1.equals(o2);
     }
 }
