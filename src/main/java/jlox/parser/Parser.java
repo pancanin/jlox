@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import jlox.errors.ParseError;
 import jlox.errors.UnexpectedTokenError;
+import jlox.errors.Error;
 import jlox.scanner.Token;
 import jlox.scanner.TokenType;
 
@@ -14,7 +15,8 @@ import jlox.scanner.TokenType;
  * @author Valeri Hristov (valericfbg@gmail.com)
  */
 public class Parser {
-
+    
+    
     /**
      * Keep a reference to the list of tokens, so we can iterate them one by one, do look-aheads and look-behinds.
      */
@@ -24,17 +26,13 @@ public class Parser {
      * The index of the token we reached so far.
      */
     private int currentIdx;
-
-    /**
-     * If we have an error during parsing, this flag will be set to true and the 'error' field will contain the error.
-     */
-    private boolean hasError;
-    private ParseError error;
+    
+    private Error<ParseError> error;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
         currentIdx = 0;
-        hasError = false;
+        error = Error.None();
     }
 
     /**
@@ -49,21 +47,16 @@ public class Parser {
             if (more()) {
                 throw new UnexpectedTokenError(current());
             }
-
+            error = Error.None();
             return e;
         } catch (ParseError e) {
-            hasError = true;
-            error = e;
+            error = new Error<ParseError>(e);
             return null;
         }
     }
 
-    public boolean hasError() {
-        return hasError;
-    }
-
-    public ParseError getError() {
-        return error;
+    public Error<ParseError> getError() {
+        return error; // Can I modify it fron outside?
     }
 
     /**

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import jlox.parser.TokenFactory;
 import jlox.scanner.TokenType;
-import jlox.errors.ErrorLogger;
 import jlox.parser.Expr;
 
 /**
@@ -18,16 +17,10 @@ import jlox.parser.Expr;
  */
 class InterpreterTest {
 
-    static ErrorLogger errorLogger;
-
-    static {
-        errorLogger = new ErrorLogger();
-    }
-
     @Test
     public void testUnaryMinusWithNumber() {
         final Expr e = new Expr.Unary(TokenFactory.make(TokenType.MINUS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -38,7 +31,7 @@ class InterpreterTest {
     @Test
     public void testUnaryNegateWithBool() {
         final Expr e = new Expr.Unary(TokenFactory.make(TokenType.BANG), new Expr.Literal(true));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
         
         final Object res = i.interpret(e);
 
@@ -49,7 +42,7 @@ class InterpreterTest {
     @Test
     public void testGroupingExpr() {
         final Expr e = new Expr.Grouping(new Expr.Literal("hi"));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -60,7 +53,7 @@ class InterpreterTest {
     @Test
     public void testBinaryPlusExprWithNumbers() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.PLUS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -71,7 +64,7 @@ class InterpreterTest {
     @Test
     public void testBinaryPlusExprWithStrings() {
         final Expr e = new Expr.Binary(new Expr.Literal("Hello, "), TokenFactory.make(TokenType.PLUS), new Expr.Literal("World!"));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -82,7 +75,7 @@ class InterpreterTest {
     @Test
     public void testBinaryPlusExprWithStringAndNumber() {
         final Expr e = new Expr.Binary(new Expr.Literal("The ans is: "), TokenFactory.make(TokenType.PLUS), new Expr.Literal(42.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -93,7 +86,7 @@ class InterpreterTest {
     @Test
     public void testBinaryPlusExprWithNumberAndString() {
         final Expr e = new Expr.Binary(new Expr.Literal(42.0), TokenFactory.make(TokenType.PLUS), new Expr.Literal("The ans is: "));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -103,7 +96,7 @@ class InterpreterTest {
     @Test
     public void testBinaryMinusExprWithNumbers() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.MINUS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -114,7 +107,7 @@ class InterpreterTest {
     @Test
     public void testBinaryMinusExprWithString() {
         final Expr e = new Expr.Binary(new Expr.Literal("2.0"), TokenFactory.make(TokenType.MINUS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -124,7 +117,7 @@ class InterpreterTest {
     @Test
     public void testBinaryDivisionWithNumbers() {
         final Expr e = new Expr.Binary(new Expr.Literal(15.0), TokenFactory.make(TokenType.SLASH), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -135,7 +128,7 @@ class InterpreterTest {
     @Test
     public void testBinaryMultiWithNumbers() {
         final Expr e = new Expr.Binary(new Expr.Literal(15.0), TokenFactory.make(TokenType.STAR), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -146,7 +139,7 @@ class InterpreterTest {
     @Test
     public void testBinaryComparisonLess() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.LESS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -157,7 +150,7 @@ class InterpreterTest {
     @Test
     public void testBinaryComparisonLessWithStrAndNumber() {
         final Expr e = new Expr.Binary(new Expr.Literal("lemons"), TokenFactory.make(TokenType.LESS), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -167,7 +160,7 @@ class InterpreterTest {
     @Test
     public void testBinaryComparisonLessEqual() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.LESS_EQUAL, "<="), new Expr.Literal(2.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -178,7 +171,7 @@ class InterpreterTest {
     @Test
     public void testBinaryComparisonGreater() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.GREATER), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -189,7 +182,7 @@ class InterpreterTest {
     @Test
     public void testBinaryComparisonGreaterEqual() {
         final Expr e = new Expr.Binary(new Expr.Literal(2.0), TokenFactory.make(TokenType.GREATER_EQUAL, ">="), new Expr.Literal(3.0));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -200,7 +193,7 @@ class InterpreterTest {
     @Test
     public void testBinaryEquality() {
         final Expr e = new Expr.Binary(new Expr.Literal("Hi, mom!"), TokenFactory.make(TokenType.EQUAL_EQUAL), new Expr.Literal("hi, mom?"));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 
@@ -211,7 +204,7 @@ class InterpreterTest {
     @Test
     public void testBinaryInequality() {
         final Expr e = new Expr.Binary(new Expr.Literal("hi"), TokenFactory.make(TokenType.BANG_EQUAL), new Expr.Literal("hi"));
-        final Interpreter i = new Interpreter(errorLogger);
+        final Interpreter i = new Interpreter();
 
         final Object res = i.interpret(e);
 

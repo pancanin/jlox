@@ -104,7 +104,7 @@ class ParserTest {
         );
         final Parser p = new Parser(ts);
         assertNull(p.parse());
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 
     @Test
@@ -143,7 +143,7 @@ class ParserTest {
         final Parser p = new Parser(ts);
 
         assertNull(p.parse());
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 
     @Test
@@ -156,7 +156,7 @@ class ParserTest {
         final Parser p = new Parser(ts);
 
         assertNull(p.parse());
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 
     @Test
@@ -213,7 +213,7 @@ class ParserTest {
         final Expr result = p.parse();
 
         assertNull(result);
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 
     @Test
@@ -228,7 +228,7 @@ class ParserTest {
         final Expr result = p.parse();
 
         assertNull(result);
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 
     @Test
@@ -241,6 +241,6 @@ class ParserTest {
         final Expr result = p.parse();
 
         assertNull(result);
-        assertTrue(p.hasError());
+        assertTrue(p.getError().notNull());
     }
 }

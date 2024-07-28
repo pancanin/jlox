@@ -10,6 +10,7 @@ import java.util.List;
 
 import jlox.errors.ErrorLogger;
 import jlox.errors.ParseError;
+import jlox.errors.RuntimeError;
 import jlox.interpreter.Interpreter;
 import jlox.parser.AstPrinter;
 import jlox.parser.Expr;
@@ -66,14 +67,21 @@ public class JLox {
         Parser p = new Parser(tokens);
         Expr expr = p.parse();
 
-        if (p.hasError()) {
-            ParseError err = p.getError();
+        if (p.getError().notNull()) {
+            ParseError err = p.getError().get();
             errorLogger.report(err.getToken().line, err.getToken().lexeme, err.getMessage());
             hadError = true;
             return;
         }
 
-        Interpreter interpreter = new Interpreter(errorLogger);
+        Interpreter interpreter = new Interpreter();
         interpreter.interpret(expr);
+
+        if (interpreter.getError().notNull()) {
+            RuntimeError err = interpreter.getError().get();
+            errorLogger.report(err.getToken().line, err.getToken().lexeme, err.getMessage());
+            hadError = true;
+            return;
+        }
     }
 }

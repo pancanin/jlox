@@ -1,6 +1,5 @@
 package jlox.interpreter;
 
-import jlox.errors.ErrorLogger;
 import jlox.errors.RuntimeError;
 import jlox.parser.Expr;
 import jlox.parser.Expr.Binary;
@@ -9,25 +8,31 @@ import jlox.parser.Expr.Literal;
 import jlox.parser.Expr.Unary;
 import jlox.scanner.Token;
 import jlox.scanner.TokenType;
+import jlox.errors.Error;
 
 /**
  * Evaluates AST and produces a value or side effects.
  */
-public class Interpreter implements Expr.Visitor<Object> {
-    private final ErrorLogger errorLogger;
 
-    public Interpreter(ErrorLogger errorLogger) {
-        this.errorLogger = errorLogger;
-    }
+// TODO: Hide the public methods behind another class.
+public class Interpreter implements Expr.Visitor<Object> {
+
+    // TODO: Do we need to differentiate between Runtime error and Parse error? They are kinda the same...
+    private Error<RuntimeError> error;
 
     public Object interpret(Expr expr) {
         try {
             final Object res = evaluate(expr);
+            error = Error.None();
             return res;
         } catch (RuntimeError e) {
-            errorLogger.report(e.getToken().line, null, e.getMessage());
+            error = new Error<RuntimeError>(e);
             return null;
         }
+    }
+
+    public Error<RuntimeError> getError() {
+        return error;
     }
 
     @Override
