@@ -2,6 +2,7 @@ package jlox.scanner;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A helper class to evaluate between TokenType and char and vise-versa.
@@ -29,11 +30,9 @@ public abstract class TokenLexemeResolver {
             Map.entry(TokenType.SLASH, '/')
         );
 
-        charToTokenTypeMap = new HashMap<>();
-
-        for (Map.Entry<TokenType, Character> entry : tokenTypeToCharMap.entrySet()) {
-            charToTokenTypeMap.put(entry.getValue(), entry.getKey());
-        }
+        charToTokenTypeMap = tokenTypeToCharMap.entrySet().stream().collect(
+            Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)
+        );
     }
 
     public static Character ttoc(TokenType type) {
