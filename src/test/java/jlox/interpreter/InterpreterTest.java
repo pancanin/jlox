@@ -126,6 +126,17 @@ class InterpreterTest {
     }
 
     @Test
+    public void testBinaryDivisionWithZero() {
+        final Expr e = new Expr.Binary(new Expr.Literal(15.0), TokenFactory.make(TokenType.SLASH), new Expr.Literal(0.0));
+        final Interpreter i = new Interpreter();
+
+        final Object res = i.interpret(e);
+
+        assertNotNull(res);
+        assertTrue(Double.isInfinite((Double)res));
+    }
+
+    @Test
     public void testBinaryMultiWithNumbers() {
         final Expr e = new Expr.Binary(new Expr.Literal(15.0), TokenFactory.make(TokenType.STAR), new Expr.Literal(3.0));
         final Interpreter i = new Interpreter();
