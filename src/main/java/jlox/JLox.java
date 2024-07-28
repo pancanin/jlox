@@ -3,7 +3,6 @@ package jlox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -39,24 +38,24 @@ public class JLox {
     }
 
     private static void runFile(String path) throws IOException {
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
-        run(new String(bytes, Charset.defaultCharset()));
+        run(Files.readString(Paths.get(path)));
 
         if (hadError) System.exit(65);
     }
 
     private static void runPrompt() throws IOException {
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
-
-        for (;;) {
-            System.out.print("> ");
-            String line = reader.readLine();
-            if (line == null) break;
-            run(line);
-
-            // Reset this flag so that the error does not propagate to the next line.
-            hadError = false;
+        try (InputStreamReader input = new InputStreamReader(System.in)) {
+            try (BufferedReader reader = new BufferedReader(input)) {
+                for (;;) {
+                    System.out.print("> ");
+                    String line = reader.readLine();
+                    if (line == null) break;
+                    run(line);
+        
+                    // Reset this flag so that the error does not propagate to the next line.
+                    hadError = false;
+                }
+            }
         }
     }
 
