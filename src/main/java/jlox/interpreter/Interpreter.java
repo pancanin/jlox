@@ -14,10 +14,8 @@ import jlox.errors.Error;
  * Evaluates AST and produces a value or side effects.
  */
 
-// TODO: Hide the public methods behind another class.
 public class Interpreter implements Expr.Visitor<Object> {
 
-    // TODO: Do we need to differentiate between Runtime error and Parse error? They are kinda the same...
     private Error<RuntimeError> error;
 
     public Object interpret(Expr expr) {

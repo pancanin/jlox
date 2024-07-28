@@ -3,7 +3,7 @@ package jlox.errors;
 /**
  * To be composed in classes and give them with the ability to store information about errors that occured and retrieve it.
  */
-public class Error<ErrorType> {
+public final class Error<ErrorType> {
 
     /**
      * If we have an error during parsing, this flag will be set to true and the 'error' field will contain the error.

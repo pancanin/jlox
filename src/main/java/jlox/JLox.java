@@ -12,7 +12,6 @@ import jlox.errors.ErrorLogger;
 import jlox.errors.ParseError;
 import jlox.errors.RuntimeError;
 import jlox.interpreter.Interpreter;
-import jlox.parser.AstPrinter;
 import jlox.parser.Expr;
 import jlox.parser.Parser;
 import jlox.scanner.Scanner;
@@ -75,7 +74,7 @@ public class JLox {
         }
 
         Interpreter interpreter = new Interpreter();
-        interpreter.interpret(expr);
+        final Object res = interpreter.interpret(expr);
 
         if (interpreter.getError().notNull()) {
             RuntimeError err = interpreter.getError().get();
@@ -83,5 +82,7 @@ public class JLox {
             hadError = true;
             return;
         }
+
+        System.out.println(res.toString());
     }
 }
