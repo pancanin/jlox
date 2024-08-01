@@ -64,32 +64,19 @@ public class Interpreter implements Expr.Visitor<Object> {
                 break;
         }
 
-        switch (expr.operator.type) {
-            case TokenType.PLUS:
-                return performBinaryPlus(expr.operator, leftVal, rightVal);
-            case TokenType.MINUS:
-                return (Double)leftVal - (Double)rightVal;
-            case TokenType.SLASH:
-                return (Double)leftVal / (Double)rightVal;
-            case TokenType.STAR:
-                return (Double)leftVal * (Double)rightVal;
-            case TokenType.LESS:
-                return (Double)leftVal < (Double)rightVal;
-            case TokenType.LESS_EQUAL:
-                return (Double)leftVal <= (Double)rightVal;
-            case TokenType.GREATER:
-                return (Double)leftVal > (Double)rightVal;
-            case TokenType.GREATER_EQUAL:
-                return (Double)leftVal >= (Double)rightVal;
-            case TokenType.EQUAL_EQUAL:
-                return isEqual(leftVal, rightVal);
-            case TokenType.BANG_EQUAL:
-                return !isEqual(leftVal, rightVal);
-            default:
-                break;
-        }
-
-        throw new RuntimeError(expr.operator, "Unimplemented binary operator.");
+        return switch (expr.operator.type) {
+            case TokenType.PLUS -> performBinaryPlus(expr.operator, leftVal, rightVal);
+            case TokenType.MINUS -> (Double)leftVal - (Double)rightVal;
+            case TokenType.SLASH -> (Double)leftVal / (Double)rightVal;
+            case TokenType.STAR -> (Double)leftVal * (Double)rightVal;
+            case TokenType.LESS -> (Double)leftVal < (Double)rightVal;
+            case TokenType.LESS_EQUAL -> (Double)leftVal <= (Double)rightVal;
+            case TokenType.GREATER -> (Double)leftVal > (Double)rightVal;
+            case TokenType.GREATER_EQUAL -> (Double)leftVal >= (Double)rightVal;
+            case TokenType.EQUAL_EQUAL -> isEqual(leftVal, rightVal);
+            case TokenType.BANG_EQUAL -> !isEqual(leftVal, rightVal);
+            default -> throw new RuntimeError(expr.operator, "Unimplemented binary operator.");
+        };
     }
 
     @Override
@@ -98,19 +85,22 @@ public class Interpreter implements Expr.Visitor<Object> {
 
         switch (expr.operator.type) {
             case TokenType.PLUS:
-                checkNumberOperand(expr.operator, val);
-                return val;
             case TokenType.MINUS:
                 checkNumberOperand(expr.operator, val);
-                return -(Double)val;
+                break;
             case TokenType.BANG:
                 checkBoolOperand(expr.operator, val);
-                return !isTruthy(val);
+                break;
             default:
                 break;
         }
 
-        throw new RuntimeError(expr.operator, "Unimplemented unary operator.");
+        return switch (expr.operator.type) {
+            case TokenType.PLUS -> val;
+            case TokenType.MINUS -> -(Double)val;
+            case TokenType.BANG -> !isTruthy(val);
+            default -> throw new RuntimeError(expr.operator, "Unimplemented unary operator.");
+        };
     }
 
     private Object evaluate(Expr e) {

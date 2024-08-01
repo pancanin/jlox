@@ -14,11 +14,9 @@ public abstract class TokenFactory {
     }
 
     public static Token make(TokenType type, String lexeme) {
-        switch (type) {
-            case TokenType.NUMBER:
-                return new Token(type, lexeme, Double.parseDouble(lexeme), 1);        
-            default:
-                return new Token(type, lexeme, lexeme, 1);
-        }
+        return switch (type) {
+            case TokenType.NUMBER -> new Token(type, lexeme, Double.parseDouble(lexeme), 1);        
+            default -> new Token(type, lexeme, lexeme, 1);
+        };
     }
 }
