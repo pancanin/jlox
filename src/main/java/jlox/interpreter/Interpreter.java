@@ -129,7 +129,7 @@ public class Interpreter implements Expr.Visitor<Object> {
 
     private boolean isTruthy(Object val) {
         if (val == null) return false;
-        if (val instanceof Boolean) return (Boolean)val;
+        if (val instanceof Boolean b) return b;
         return true;
     }
 
@@ -144,22 +144,17 @@ public class Interpreter implements Expr.Visitor<Object> {
      * @return Returns the result of performing the + operation on the two values.
      */
     private Object performBinaryPlus(Token plus, Object leftVal, Object rightVal) {
-        final boolean leftIsString = leftVal instanceof String;
-        final boolean leftIsNumber = leftVal instanceof Double;
-        final boolean rightIsString = rightVal instanceof String;
-        final boolean rightIsNumber = rightVal instanceof Double;
-
-        if (leftIsString && rightIsNumber) {
-            return (String)leftVal + rightVal.toString();
+        if (leftVal instanceof String l && rightVal instanceof Double r) {
+            return l + r.toString();
         }
-        else if (leftIsString && rightIsString) {
-            return (String)leftVal + (String)rightVal;
+        else if (leftVal instanceof String l && rightVal instanceof String r) {
+            return l + r;
         }
-        else if (leftIsNumber && rightIsString) {
+        else if (leftVal instanceof Number && rightVal instanceof String) {
             throw new RuntimeError(plus, "Invalid operation between left-hand side number and right-hand side string");
         }
-        else if (leftIsNumber && rightIsNumber) {
-            return (Double)leftVal + (Double)rightVal;
+        else if (leftVal instanceof Double l && rightVal instanceof Double r) {
+            return l + r;
         }
         else {
             final String msg = String.format("Unsupported operation between values: '%s' and '%s'.", leftVal, rightVal);
