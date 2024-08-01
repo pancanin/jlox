@@ -309,24 +309,25 @@ class ScannerTest {
 
     @Test
     public void shouldIgnoreBlockComments() {
-        final String code = "var\n" +
-                "/*\n" +
-                "* This is a block comment\n" +
-                "/* This is a nested /* This is hella nested code */ block comment */\n" +
-                "*/\n" +
-                        "a";
+        final String code = """
+                var
+                /*
+                * This is a block comment
+                /* This is a nested /* This is hella nested code */ block comment */
+                */
+                    a""";
         final Scanner sc = new Scanner(code, errorLogger);
         final List<Token> tokens = sc.scanTokens();
         assertEquals(3, tokens.size());
         assertEquals(TokenType.VAR, tokens.get(0).type);
         assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
-        assertEquals(sc.getCurrentLine(), 6);
+        assertEquals(6, sc.getCurrentLine());
     }
 
     @Test
     public void shouldConsumeIdentifierStartingWithVar() {
         final String code = "var varco = \"var\"";
-        final Scanner sc = new Scanner(code, errorLogger);
+        final var sc = new Scanner(code, errorLogger);
         final List<Token> tokens = sc.scanTokens();
 
         assertEquals(5, tokens.size());
@@ -341,19 +342,20 @@ class ScannerTest {
 
     @Test
     public void shouldConsumeWhileTrueWithIfIfElseElse() {
-        final String code = "while (true) {" +
-                            "// Intern dev code commencing...\n" +
-                            "   if (somevar == true) {" +
-                            "       return true;" +
-                            "   }" +
-                            "   else if (somevar == false) {" +
-                            "       return false;" +
-                            "   }" +
-                            "   else {" +
-                            "       return nil == this;" +
-                            "   }" +
-                            "}";
-        final Scanner sc = new Scanner(code, errorLogger);
+        final String code = """
+                            while (true) {
+                               // Intern dev code commencing...
+                               if (somevar == true) {
+                                   return true;
+                               }
+                               else if (somevar == false) {
+                                   return false;
+                               }
+                               else {
+                                   return nil == this;
+                               }
+                            }""";
+        final var sc = new Scanner(code, errorLogger);
         final List<Token> tokens = sc.scanTokens();
 
         assertEquals(38, tokens.size());
